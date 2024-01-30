@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kissflow Display Page</title>
+</head>
+<body>
+    <div class="header">
+        <h1>Line Item Details</h1>
+        <button onclick="fetchData()">Fetch Data</button>
+        <div id="lineItemContent" class="line-item-content">
+            <!-- Content will be displayed here -->
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@kissflow/lowcode-client-sdk@latest/dist/kfsdk.umd.js"></script>
+    <script type="text/javascript">
+
+        let kf;
+
+        async function fetchData() {
+            kf = await window.kf.initialize();
+            let acc_id = await kf.account._id;
+
+            // Make an API call to retrieve data
+            //let apiEndpoint = "https://dev-r1088.kissflow.com/form/2/Ac8HSoePu4bg/Product_details_A00/list";
+            //let response = await fetch(apiEndpoint);
+            let response = await kf.api("/form/2/"+acc_id+"/Product_details_A00/list");
+
+            // Filter and extract line_items from the response
+            let data = await response;
+            let lineItems = extractLineItems(data);
+            displayLineItemContent(lineItems);
+        }
+
+        function extractLineItems(data) { 
+            // Implement logic to extract line_items based on the structure of the API response
+            // For example, if line_items is an array in the response, you might do something like:
+            return data.line_items || [];
+        }
+
+        function displayLineItemContent(lineItems) {
+            // Get the element where content will be displayed
+            var lineItemContentElement = document.getElementById("lineItemContent");
+
+            // Check if line items are not empty
+            if (lineItems.length > 0) {
+                // Display line item content
+                lineItemContentElement.innerHTML = "<p><strong>Line Item Content:</strong></p>" + JSON.stringify(lineItems, null, 2);
+            } else {
+                // Display a message if line items are empty
+                lineItemContentElement.innerHTML = "<p>No line items available.</p>";
+            }
+        }
+
+    </script>
+    
+</body>
+</html>
